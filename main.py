@@ -1,10 +1,8 @@
 #TODO separate subs and save boxes into different tabs
 #TODO add labels, descriptions, how to use
-#TODO add clear save box button
 #TODO better the layout
 #TODO add small box telling you number of saved sentences
 #TODO make listboxes stretch vertically
-#TODO add delete, delete all buttons
 #TODO Wrap text
 #TODO Add 3 modes:
 #       One mode for combining and directly editing saved entries
@@ -26,6 +24,9 @@ def copy(btn):
         if(line != ""):
             pyperclip.copy(line)
             app.removeListItem("save", line)
+
+def clear_save(btn):
+    app.updateListBox("save", [""], select=False)
 
 def open_file(btn):
     file_name = app.openBox("Open .srt", dirName=None, fileTypes=[("subtitle files", '*.srt')],
@@ -68,16 +69,16 @@ with gui("SRT Reader") as app:
     #holds loaded subs
     sub_list = []
     #holds all sentences user wants to save
-    save = []
+    save = [""]
     app.addListBox("subs", sub_list)
     app.setListBoxChangeFunction("subs", move)
     app.addListBox("save", save)
     app.setListBoxChangeFunction("save", copy)
-    app.addListItem("save","",select=False)
     app.setGeometry(300, 500)
     app.setLocation(0, 0)
     app.setFont(12, font = "Consolas")
     app.addButton("Open", open_file)
+    app.addButton("Clear Saved", clear_save)
     app.setResizable(canResize=True)
     
 
