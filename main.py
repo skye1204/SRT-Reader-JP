@@ -16,7 +16,8 @@ def move(btn):
     for line in app.getListBox("subs"):
         if(line != ""):
             app.setListItem("save", "", line, first = True)
-            app.addListItem("save", "", select = False) 
+            app.addListItem("save", "", select = False)
+            app.setLabel("num_saved", len(app.getAllListItems("save"))-1)
             
 
 def copy(btn):
@@ -24,9 +25,11 @@ def copy(btn):
         if(line != ""):
             pyperclip.copy(line)
             app.removeListItem("save", line)
+            app.setLabel("num_saved", len(app.getAllListItems("save"))-1)
 
 def clear_save(btn):
     app.updateListBox("save", [""], select=False)
+    app.setLabel("num_saved", len(save))
 
 def open_file(btn):
     file_name = app.openBox("Open .srt", dirName=None, fileTypes=[("subtitle files", '*.srt')],
@@ -77,6 +80,7 @@ with gui("SRT Reader") as app:
     app.setGeometry(300, 500)
     app.setLocation(0, 0)
     app.setFont(12, font = "Consolas")
+    app.addLabel("num_saved", len(save)-1)
     app.addButton("Open", open_file)
     app.addButton("Clear Saved", clear_save)
     app.setResizable(canResize=True)
