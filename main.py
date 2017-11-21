@@ -7,6 +7,9 @@
 #TODO Add 3 modes:
 #       One mode for combining and directly editing saved entries
 #       one mode for adding entries to save list
+#TODO Add support for more file extensions
+#TODO Search function
+#TODO Go to certain time
 
 import codecs
 import pyperclip
@@ -16,7 +19,8 @@ def move(btn):
     for line in app.getListBox("subs"):
         if(line != ""):
             app.setListItem("save", "", line, first = True)
-            app.addListItem("save", "", select = False) 
+            app.addListItem("save", "", select = False)
+            app.setLabel("num_saved", len(app.getAllListItems("save"))-1)
             
 
 def copy(btn):
@@ -24,9 +28,11 @@ def copy(btn):
         if(line != ""):
             pyperclip.copy(line)
             app.removeListItem("save", line)
+            app.setLabel("num_saved", len(app.getAllListItems("save"))-1)
 
 def clear_save(btn):
     app.updateListBox("save", [""], select=False)
+    app.setLabel("num_saved", 0)
 
 def open_file(btn):
     file_name = app.openBox("Open .srt", dirName=None, fileTypes=[("subtitle files", '*.srt')],
@@ -70,15 +76,20 @@ with gui("SRT Reader") as app:
     sub_list = []
     #holds all sentences user wants to save
     save = [""]
-    app.addListBox("subs", sub_list)
+    app.addListBox("subs", sub_list, 0, 0)
     app.setListBoxChangeFunction("subs", move)
-    app.addListBox("save", save)
+    app.addListBox("save", save, 1, 0)
     app.setListBoxChangeFunction("save", copy)
     app.setGeometry(300, 500)
     app.setLocation(0, 0)
     app.setFont(12, font = "Consolas")
+    app.addLabel("num_saved", len(save)-1)
+    app.setLabelAlign("num_saved", "right")
+    app.setLabelTooltip("num_saved", "Tracks number of saved lines")
+    app.addButton("Clear", clear_save)
     app.addButton("Open", open_file)
-    app.addButton("Clear Saved", clear_save)
+    app.setButtonSticky("Open", "left")
+    app.setButtonSticky("Clear", "left")
     app.setResizable(canResize=True)
     
 
