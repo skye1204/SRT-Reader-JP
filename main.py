@@ -1,7 +1,5 @@
-#TODO separate subs and save boxes into different tabs
 #TODO add labels, descriptions, how to use
 #TODO better the layout
-#TODO add small box telling you number of saved sentences
 #TODO make listboxes stretch vertically
 #TODO Wrap text
 #TODO Add 3 modes:
@@ -10,6 +8,7 @@
 #TODO Add support for more file extensions
 #TODO Search function
 #TODO Go to certain time
+#TODO Change color of already saved lines and only allow one save per line
 
 import codecs
 import pyperclip
@@ -20,7 +19,8 @@ def move(btn):
         if(line != ""):
             app.setListItem("save", "", line, first = True)
             app.addListItem("save", "", select = False)
-            app.setLabel("num_saved", len(app.getAllListItems("save"))-1)
+            app.setLabel("num_saved_1", len(app.getAllListItems("save"))-1)
+            app.setLabel("num_saved_2", len(app.getAllListItems("save"))-1)
             
 
 def copy(btn):
@@ -28,12 +28,14 @@ def copy(btn):
         if(line != ""):
             pyperclip.copy(line)
             app.removeListItem("save", line)
-            app.setLabel("num_saved", len(app.getAllListItems("save"))-1)
+            app.setLabel("num_saved_1", len(app.getAllListItems("save"))-1)
+            app.setLabel("num_saved_2", len(app.getAllListItems("save"))-1)
 
 def clear_save(btn):
     app.updateListBox("save", [""], select=False)
-    app.setLabel("num_saved", 0)
-
+    app.setLabel("num_saved_1", 0)
+    app.setLabel("num_saved_2", 0)
+    
 def open_file(btn):
     file_name = app.openBox("Open .srt", dirName=None, fileTypes=[("subtitle files", '*.srt')],
                 asFile=False, parent=None)
@@ -76,21 +78,38 @@ with gui("SRT Reader") as app:
     sub_list = []
     #holds all sentences user wants to save
     save = [""]
-    app.addListBox("subs", sub_list, 0, 0)
-    app.setListBoxChangeFunction("subs", move)
-    app.addListBox("save", save, 1, 0)
-    app.setListBoxChangeFunction("save", copy)
+    app.setResizable(canResize=True)
     app.setGeometry(300, 500)
     app.setLocation(0, 0)
     app.setFont(12, font = "Consolas")
-    app.addLabel("num_saved", len(save)-1)
-    app.setLabelAlign("num_saved", "right")
-    app.setLabelTooltip("num_saved", "Tracks number of saved lines")
-    app.addButton("Clear", clear_save)
+    
+    app.startTabbedFrame("TabbedFrame")
+    
+    app.startTab("Subtitles")
+    app.addLabel("subs_title", "Subtitles")
+    app.setLabelRelief("subs_title", "groove")
+    app.addListBox("subs", sub_list)
+    app.setListBoxChangeFunction("subs", move)
+    app.addLabel("num_saved_1", len(save)-1)
+    app.setLabelAlign("num_saved_1", "right")
+    app.setLabelTooltip("num_saved_1", "Tracks number of saved lines")
     app.addButton("Open", open_file)
-    app.setButtonSticky("Open", "left")
-    app.setButtonSticky("Clear", "left")
-    app.setResizable(canResize=True)
+    #app.setButtonSticky("Open", "left")
+    app.stopTab()
+    
+    app.startTab("Saved Lines")
+    app.addLabel("save_title", "Saved Lines")
+    app.setLabelRelief("save_title", "groove")
+    app.addListBox("save", save)
+    app.setListBoxChangeFunction("save", copy)
+    app.addLabel("num_saved_2", len(save)-1)
+    app.setLabelAlign("num_saved_2", "right")
+    app.setLabelTooltip("num_saved_2", "Tracks number of saved lines")
+    app.addButton("Clear", clear_save)
+    #app.setButtonSticky("Clear", "left")
+    app.stopTab()
+    app.stopTabbedFrame()
+    
     
 
     
