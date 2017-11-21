@@ -85,6 +85,7 @@ with gui("SRT Reader") as app:
     app.setFont(12, font = "Consolas")
     app.addLabel("num_saved", len(save)-1)
     app.setLabelAlign("num_saved", "right")
+    app.setLabelTooltip("num_saved", "Tracks number of saved lines")
     app.addButton("Clear", clear_save)
     app.addButton("Open", open_file)
     app.setButtonSticky("Open", "left")
