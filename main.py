@@ -9,6 +9,10 @@
 #TODO Search function
 #TODO Go to certain time
 #TODO Change color of already saved lines and only allow one save per line
+#TODO Add default directory
+#TODO Ask user if they want to exit when the saved list is not empty
+
+#Requires additional software on non-Windows OS
 
 import codecs
 import pyperclip
